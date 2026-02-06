@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Дело в Шляпе | App</title>
+    <title>Дело в Шляпе | Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -49,7 +49,7 @@
         /* --- Header --- */
         .header {
             padding: 15px 20px;
-            background: rgba(255,255,255,0.95);
+            background: rgba(255,255,255,0.9);
             backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
@@ -86,6 +86,7 @@
         
         .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); }
         .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: white; color: var(--danger); border: 1px solid var(--danger); }
         .btn-outline { background: transparent; border: 1px solid #dcdde1; color: var(--text-sec); }
 
         .card {
@@ -102,7 +103,7 @@
         .role-card:active { transform: scale(0.95); }
         .role-emoji { font-size: 36px; display: block; margin-bottom: 10px; }
 
-        /* --- Buyer Catalog --- */
+        /* --- Buyer Styles --- */
         .product-card {
             background: white; border-radius: 20px; overflow: hidden; margin-bottom: 20px;
             box-shadow: var(--shadow); position: relative; cursor: pointer;
@@ -115,7 +116,6 @@
             box-shadow: 0 4px 10px rgba(0, 184, 148, 0.3);
         }
 
-        /* --- Buyer Task Stepper --- */
         .stepper { display: flex; justify-content: space-between; margin-bottom: 25px; position: relative; }
         .stepper::before {
             content: ''; position: absolute; top: 10px; left: 0; right: 0; height: 3px;
@@ -129,16 +129,14 @@
         .step.active { background: var(--primary); transform: scale(1.2); }
         .step.done { background: var(--success); }
 
-        /* --- Upload Zone --- */
         .upload-zone {
             border: 2px dashed #b2bec3; border-radius: 16px; padding: 30px;
             text-align: center; color: #999; cursor: pointer; transition: 0.2s;
             background: #fdfdfd; margin: 15px 0;
         }
-        .upload-zone.active { border-color: var(--primary); background: #eceaff; color: var(--primary); }
         .upload-zone.done { border-color: var(--success); background: #e6fffa; color: var(--success); }
 
-        /* --- Seller CRM --- */
+        /* --- SELLER CRM STYLES (Rich Cards) --- */
         .tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; scrollbar-width: none; }
         .tabs::-webkit-scrollbar { display: none; }
         .tab {
@@ -147,13 +145,27 @@
         }
         .tab.active { background: var(--primary); color: white; }
 
-        .crm-item {
-            background: white; padding: 15px; border-radius: 16px; margin-bottom: 10px;
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03); cursor: pointer;
+        .crm-card {
+            background: white; border-radius: 16px; padding: 15px; margin-bottom: 15px;
+            box-shadow: var(--shadow); cursor: pointer; transition: transform 0.1s;
         }
+        .crm-card:active { transform: scale(0.98); }
+        
+        .crm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .user-row { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .crm-time { font-size: 11px; color: #999; background: #f5f5f5; padding: 4px 8px; border-radius: 6px; }
+        
+        .crm-body { display: flex; gap: 12px; background: #f8f9fa; padding: 10px; border-radius: 12px; }
+        .crm-thumb { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        
+        .crm-footer { margin-top: 12px; display: flex; align-items: center; justify-content: space-between; }
+        .status-badge { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; }
+        .sb-blue { background: #eef1ff; color: var(--primary); }
+        .sb-orange { background: #fff5e6; color: #e17055; }
+        .sb-green { background: #e6fffa; color: var(--success); }
 
-        /* --- Loader & Toast --- */
+        /* --- Overlays --- */
         .loader-overlay {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(255,255,255,0.9); z-index: 200;
@@ -175,14 +187,6 @@
         }
         .toast.show { transform: translateY(0); }
 
-        /* --- Status States --- */
-        .status-box {
-            padding: 15px; border-radius: 12px; font-size: 13px; margin-bottom: 20px;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .st-wait { background: #fff3cd; color: #856404; }
-        .st-ok { background: #d4edda; color: #155724; }
-
     </style>
 </head>
 <body>
@@ -202,7 +206,7 @@
             <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
                 <div style="font-size: 50px; margin-bottom: 10px;">🎩</div>
                 <h2>Добро пожаловать</h2>
-                <p style="color: var(--text-sec); font-size: 14px;">Единая платформа для раздач</p>
+                <p style="color: var(--text-sec); font-size: 14px;">Единая платформа для селлеров и покупателей</p>
             </div>
 
             <div class="role-grid">
@@ -214,20 +218,20 @@
                 <div class="role-card" onclick="setRole('seller')">
                     <span class="role-emoji">💼</span>
                     <b>Я Селлер</b>
-                    <div style="font-size: 11px; color: #aaa; margin-top: 5px;">Управление заказами</div>
+                    <div style="font-size: 11px; color: #aaa; margin-top: 5px;">CRM и Выплаты</div>
                 </div>
             </div>
             
             <div style="margin-top: 30px; background: white; padding: 15px; border-radius: 16px; box-shadow: var(--shadow);">
-                <div style="font-weight: 600; font-size: 13px; margin-bottom: 5px;">📢 Новости</div>
-                <div style="font-size: 12px; color: var(--text-sec);">Запущен авто-вывод средств на СБП. Теперь деньги приходят за 1 минуту!</div>
+                <div style="font-weight: 600; font-size: 13px; margin-bottom: 5px;">📢 Система обновлена</div>
+                <div style="font-size: 12px; color: var(--text-sec);">Добавлена авто-проверка скриншотов и мгновенные выплаты через СБП.</div>
             </div>
         </div>
 
         <div id="screen-catalog" class="screen">
             <h2 style="margin-bottom: 20px;">Каталог</h2>
             
-            <div class="product-card" onclick="startTask('Roman Magic')">
+            <div class="product-card" onclick="startTask('Roman Magic', 'https://ir.ozone.ru/s3/multimedia-0/wc1000/6647987820.jpg')">
                 <div class="cashback-badge">100% Кэшбэк</div>
                 <img src="https://ir.ozone.ru/s3/multimedia-0/wc1000/6647987820.jpg" class="prod-img">
                 <div class="prod-info">
@@ -239,7 +243,7 @@
                 </div>
             </div>
 
-            <div class="product-card" onclick="startTask('Chemistry Kids')">
+            <div class="product-card" onclick="startTask('Chemistry Kids', 'https://ir.ozone.ru/s3/multimedia-v/wc1000/6682736467.jpg')">
                 <div class="cashback-badge">Сертификат</div>
                 <img src="https://ir.ozone.ru/s3/multimedia-v/wc1000/6682736467.jpg" class="prod-img">
                 <div class="prod-info">
@@ -255,9 +259,7 @@
         <div id="screen-task" class="screen">
             <div class="stepper">
                 <div class="step active" id="s1"></div> <div class="step" id="s2"></div> <div class="step" id="s3"></div> <div class="step" id="s4"></div> <div class="step" id="s5"></div> </div>
-
-            <div id="task-container">
-                </div>
+            <div id="task-container"></div>
         </div>
 
 
@@ -273,8 +275,8 @@
 
             <div class="tabs">
                 <div class="tab active" onclick="filterCrm('all', this)">Все</div>
-                <div class="tab" onclick="filterCrm('order', this)">Заказы (2)</div>
-                <div class="tab" onclick="filterCrm('review', this)">Отзывы (4)</div>
+                <div class="tab" onclick="filterCrm('order', this)">Заказы (1)</div>
+                <div class="tab" onclick="filterCrm('review', this)">Отзывы (1)</div>
                 <div class="tab" onclick="filterCrm('payout', this)">Выплаты (1)</div>
             </div>
 
@@ -289,7 +291,7 @@
 
     <div id="loader" class="loader-overlay">
         <div class="spinner"></div>
-        <div style="font-weight: 600; color: var(--text-sec);">Обработка данных...</div>
+        <div style="font-weight: 600; color: var(--text-sec);">Синхронизация...</div>
     </div>
 
     <div id="toast" class="toast">
@@ -302,23 +304,57 @@
 <script>
     // --- STATE MANAGEMENT ---
     let historyStack = ['screen-home'];
-    let currentRole = '';
     let currentTaskStep = 1;
     let currentTaskName = '';
+    let currentTaskImg = '';
     
-    // --- MOCK DATA ---
+    // --- MOCK DATA (SELLER CRM) ---
     const crmData = [
-        { id: 1, type: 'order', user: 'Ольга К.', prod: 'Roman Magic', time: '5 мин', status: 'Скрин заказа', img: 'https://via.placeholder.com/150' },
-        { id: 2, type: 'review', user: 'Максим Г.', prod: 'Roman Magic', time: '1 ч', status: 'Проверка отзыва', text: 'Классный набор!' },
-        { id: 3, type: 'payout', user: 'Алина Ф.', prod: 'Юный Химик', time: '2 ч', status: 'Ждет выплату', amount: 950 },
+        { 
+            id: 101, 
+            type: 'order', 
+            user: 'Ольга К.', 
+            avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+            prod: 'Roman Magic', 
+            prodImg: 'https://ir.ozone.ru/s3/multimedia-0/wc1000/6647987820.jpg',
+            time: '5 мин', 
+            status: 'Скрин заказа', 
+            badge: 'sb-blue',
+            proof: 'https://via.placeholder.com/300x500/333333/ffffff?text=SCREENSHOT+ORDER' 
+        },
+        { 
+            id: 102, 
+            type: 'review', 
+            user: 'Максим Г.', 
+            avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+            prod: 'Roman Magic',
+            prodImg: 'https://ir.ozone.ru/s3/multimedia-0/wc1000/6647987820.jpg', 
+            time: '1 ч', 
+            status: 'Проверка отзыва', 
+            badge: 'sb-orange',
+            text: 'Отличный набор! Ребенку понравилось смешивать реактивы. Инструкция понятная, всё безопасно.',
+            photos: ['https://via.placeholder.com/100', 'https://via.placeholder.com/100']
+        },
+        { 
+            id: 103, 
+            type: 'payout', 
+            user: 'Алина Ф.', 
+            avatar: 'https://randomuser.me/api/portraits/women/12.jpg',
+            prod: 'Юный Химик', 
+            prodImg: 'https://ir.ozone.ru/s3/multimedia-v/wc1000/6682736467.jpg',
+            time: '2 ч', 
+            status: 'Ждет выплату', 
+            badge: 'sb-green',
+            amount: 950,
+            bank: 'Т-Банк • 89001234567'
+        },
     ];
 
-    // --- NAVIGATION ---
+    // --- NAVIGATION LOGIC ---
     function goTo(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
         
-        // Header Logic
         const backBtn = document.getElementById('backBtn');
         const title = document.getElementById('page-title');
         
@@ -340,7 +376,6 @@
             historyStack.pop();
             const prev = historyStack[historyStack.length - 1];
             
-            // Fix double jump
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(prev).classList.add('active');
             
@@ -352,7 +387,6 @@
     }
 
     function setRole(role) {
-        currentRole = role;
         if (role === 'buyer') goTo('screen-catalog');
         else {
             renderCrmList();
@@ -360,10 +394,11 @@
         }
     }
 
-    // --- BUYER LOGIC (THE BOT FLOW) ---
+    // --- BUYER LOGIC (WIZARD) ---
     
-    function startTask(productName) {
-        currentTaskName = productName;
+    function startTask(name, img) {
+        currentTaskName = name;
+        currentTaskImg = img;
         currentTaskStep = 1;
         renderBuyerStep();
         goTo('screen-task');
@@ -371,10 +406,8 @@
 
     function renderBuyerStep() {
         const container = document.getElementById('task-container');
-        const steps = [1,2,3,4,5];
-        
-        // Update Stepper
-        steps.forEach(s => {
+        // Update Stepper Visuals
+        [1,2,3,4,5].forEach(s => {
             const el = document.getElementById('s'+s);
             el.className = 'step';
             if (s < currentTaskStep) el.classList.add('done');
@@ -391,7 +424,7 @@
                     <p>2. Введите запрос:</p>
                     <div style="background:#f1f2f6; padding:12px; border-radius:10px; font-weight:700; text-align:center; color:var(--primary); margin:10px 0;">набор опытов для детей</div>
                     <p>3. Найдите бренд <b>Дело в Шляпе</b> и товар "${currentTaskName}".</p>
-                    <p>4. Оформите заказ (не оплачивайте, если это сертификат, или оплатите для кэшбэка).</p>
+                    <img src="${currentTaskImg}" style="width:60px; height:60px; border-radius:8px; display:block; margin:10px auto;">
                 </div>
                 <button class="btn btn-primary" onclick="nextStep()">📸 Я оформил заказ</button>
             `;
@@ -404,18 +437,17 @@
                 <button id="btn-next" class="btn btn-primary" disabled onclick="simulateCheck()">Отправить на проверку</button>
             `;
         }
-        else if (currentTaskStep === 3) { // PICKUP PROOF
+        else if (currentTaskStep === 3) { // PICKUP
             html = `
-                <div class="status-box st-ok">✅ Заказ подтвержден! Ждем доставку.</div>
+                <div style="background:#e6fffa; color:var(--success); padding:10px; border-radius:10px; font-weight:600; margin-bottom:15px;">✅ Заказ подтвержден! Ждем доставку.</div>
                 <h2>📦 Шаг 3: Получение</h2>
-                <p>Когда заберете товар из ПВЗ, сделайте фото коробки в руках.</p>
+                <p>Когда заберете товар из ПВЗ, сделайте фото коробки.</p>
                 <div class="upload-zone" onclick="simulateUpload(this)">📸 Загрузить фото с ПВЗ</div>
                 <button id="btn-next" class="btn btn-primary" disabled onclick="simulateCheck()">Я забрал товар</button>
             `;
         }
-        else if (currentTaskStep === 4) { // DRAFT REVIEW
+        else if (currentTaskStep === 4) { // REVIEW
             html = `
-                 <div class="status-box st-ok">✅ Фото товара принято.</div>
                  <h2>📝 Шаг 4: Отзыв</h2>
                  <p>Пришлите текст и фото для отзыва. Мы проверим его перед публикацией.</p>
                  <input type="text" placeholder="Текст отзыва..." style="width:100%; padding:15px; border-radius:12px; border:1px solid #ddd; margin-bottom:10px;">
@@ -423,57 +455,39 @@
                  <button id="btn-next" class="btn btn-primary" disabled onclick="simulateCheck()">Согласовать текст</button>
             `;
         }
-        else if (currentTaskStep === 5) { // FINAL & PAYOUT
+        else if (currentTaskStep === 5) { // PAYOUT
             html = `
-                <div class="status-box st-ok">✅ Текст согласован! Публикуйте.</div>
                 <h2>💰 Финал: Выплата</h2>
-                <p>Выложите отзыв на WB, сделайте скриншот "На проверке" и введите реквизиты.</p>
+                <p>Отзыв опубликован! Введите реквизиты для получения кэшбэка.</p>
                 <div class="upload-zone" onclick="simulateUpload(this)">⭐ Скрин опубликованного отзыва</div>
                 <input type="text" placeholder="+7 (900) ... (СБП)" style="width:100%; padding:15px; border-radius:12px; border:1px solid #ddd; margin-bottom:15px;">
                 <button id="btn-next" class="btn btn-success" disabled onclick="finishTask()">Получить деньги</button>
             `;
         }
-
         container.innerHTML = html;
     }
 
-    // Simulation Utils
-    function nextStep() {
-        currentTaskStep++;
-        renderBuyerStep();
-    }
-
+    // Buyer Simulation Utils
+    function nextStep() { currentTaskStep++; renderBuyerStep(); }
     function simulateUpload(el) {
         el.innerText = "⏳ Загрузка...";
-        el.classList.add('active');
         setTimeout(() => {
             el.innerHTML = "✅ Файл загружен";
-            el.classList.remove('active');
             el.classList.add('done');
             document.getElementById('btn-next').disabled = false;
         }, 800);
     }
-
     function simulateCheck() {
         showLoader(true);
-        setTimeout(() => {
-            showLoader(false);
-            showToast("✅ Менеджер одобрил ваш отчет!");
-            nextStep();
-        }, 2000); // 2 seconds delay to simulate manager
+        setTimeout(() => { showLoader(false); showToast("✅ Менеджер одобрил ваш отчет!"); nextStep(); }, 1500);
     }
-
     function finishTask() {
         showLoader(true);
-        setTimeout(() => {
-            showLoader(false);
-            alert("🎉 Выплата отправлена! Спасибо за участие.");
-            goTo('screen-home');
-        }, 2000);
+        setTimeout(() => { showLoader(false); alert("🎉 Выплата отправлена! Спасибо за участие."); goTo('screen-home'); }, 2000);
     }
 
 
-    // --- SELLER LOGIC ---
+    // --- SELLER CRM LOGIC (RICH CARDS) ---
 
     function renderCrmList(filterType = 'all') {
         const container = document.getElementById('crm-list');
@@ -482,20 +496,27 @@
         crmData.forEach(item => {
             if (filterType !== 'all' && item.type !== filterType) return;
             
-            let icon = '📦';
-            if (item.type === 'review') icon = '📝';
-            if (item.type === 'payout') icon = '💰';
-
+            // Rich Card HTML
             container.innerHTML += `
-                <div class="crm-item" onclick="openCrmDetail(${item.id})">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <div style="font-size:24px; background:#f1f2f6; width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center;">${icon}</div>
-                        <div>
+                <div class="crm-card" onclick="openCrmDetail(${item.id})">
+                    <div class="crm-header">
+                        <div class="user-row">
+                            <img src="${item.avatar}" class="avatar">
                             <div style="font-weight:600; font-size:14px;">${item.user}</div>
-                            <div style="font-size:12px; color:#999;">${item.prod} • ${item.status}</div>
+                        </div>
+                        <div class="crm-time">${item.time}</div>
+                    </div>
+                    <div class="crm-body">
+                        <img src="${item.prodImg}" class="crm-thumb">
+                        <div style="display:flex; flex-direction:column; justify-content:center;">
+                            <div style="font-size:13px; font-weight:500;">${item.prod}</div>
+                            <div style="font-size:11px; color:#999;">ID: #839${item.id}</div>
                         </div>
                     </div>
-                    <div style="font-size:12px; color:var(--primary); font-weight:600;">${item.time}</div>
+                    <div class="crm-footer">
+                        <div class="status-badge ${item.badge}">${item.status}</div>
+                        <div style="color:#ccc; font-size:12px;">▶</div>
+                    </div>
                 </div>
             `;
         });
@@ -512,61 +533,77 @@
         const container = document.getElementById('crm-detail-content');
         
         let html = `
-            <h2>${item.status}</h2>
-            <div class="card">
-                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                    <b>${item.user}</b>
-                    <span style="color:#999;">${item.time} назад</span>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+                <img src="${item.avatar}" style="width:40px; height:40px; border-radius:50%;">
+                <div>
+                    <h2 style="margin:0; font-size:18px;">${item.user}</h2>
+                    <div style="color:#777; font-size:12px;">${item.prod}</div>
                 </div>
+            </div>
         `;
 
+        // Dynamic Content based on Type
         if (item.type === 'order') {
             html += `
-                <p>Проверьте скриншот заказа.</p>
-                <div style="background:#333; height:200px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:white; margin-bottom:20px;">[СКРИНШОТ]</div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <button class="btn btn-outline" onclick="goBack()">Отклонить</button>
-                    <button class="btn btn-success" onclick="crmAction('Заказ подтвержден')">Принять</button>
+                <div class="card">
+                    <div style="font-weight:600; margin-bottom:10px;">Проверка заказа</div>
+                    <p style="font-size:13px; color:#777;">Убедитесь, что название товара и цена совпадают.</p>
+                    <div style="background:#222; border-radius:10px; height:250px; display:flex; align-items:center; justify-content:center; color:white; margin-bottom:20px;">
+                        [СКРИНШОТ ЗАКАЗА]
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <button class="btn btn-danger" onclick="crmAction('Отклонено')">Отклонить</button>
+                        <button class="btn btn-success" onclick="crmAction('Заказ принят')">Принять</button>
+                    </div>
                 </div>
             `;
         } else if (item.type === 'review') {
              html += `
-                <p>Текст: "<i>${item.text}</i>"</p>
-                <div style="display:flex; gap:5px; margin-bottom:20px;">
-                    <div style="width:60px; height:60px; background:#eee; border-radius:8px;"></div>
-                    <div style="width:60px; height:60px; background:#eee; border-radius:8px;"></div>
+                <div class="card">
+                    <div style="font-weight:600; margin-bottom:10px;">Согласование отзыва</div>
+                    <div style="background:#f8f9fa; padding:12px; border-radius:10px; font-style:italic; font-size:13px; margin-bottom:15px;">
+                        "${item.text}"
+                    </div>
+                    <div style="display:flex; gap:8px; margin-bottom:20px;">
+                         <div style="width:60px; height:60px; background:#ddd; border-radius:8px;"></div>
+                         <div style="width:60px; height:60px; background:#ddd; border-radius:8px;"></div>
+                    </div>
+                    <button class="btn btn-success" onclick="crmAction('Текст согласован')">Разрешить публикацию</button>
                 </div>
-                <button class="btn btn-success" onclick="crmAction('Отзыв согласован')">Согласовать</button>
             `;
         } else if (item.type === 'payout') {
              html += `
-                <p>К выплате: <b style="font-size:18px;">${item.amount} ₽</b></p>
-                <div style="background:#f1f2f6; padding:10px; border-radius:10px; margin-bottom:20px;">Т-Банк: +7 999 ...</div>
-                <button class="btn btn-primary" onclick="crmAction('Выплата отправлена')">⚡ Авто-выплата</button>
+                <div class="card">
+                    <div style="font-weight:600; margin-bottom:10px;">Финальная выплата</div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <span style="color:#777;">Сумма:</span>
+                        <span style="font-weight:700;">${item.amount} ₽</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                        <span style="color:#777;">Банк:</span>
+                        <span>${item.bank}</span>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="crmAction('Средства отправлены (СБП)')">⚡ Авто-выплата</button>
+                    <button class="btn btn-outline" style="margin-top:10px;" onclick="crmAction('Сертификат выдан')">🎁 Выдать сертификатом</button>
+                </div>
             `;
         }
 
-        html += `</div>`;
         container.innerHTML = html;
         goTo('screen-crm-detail');
     }
 
     function crmAction(msg) {
         showLoader(true);
-        setTimeout(() => {
-            showLoader(false);
-            showToast("✅ " + msg);
-            goBack();
-        }, 1000);
+        setTimeout(() => { showLoader(false); showToast("✅ " + msg); goBack(); }, 1000);
     }
 
     // --- UTILS ---
     function showLoader(state) {
         const el = document.getElementById('loader');
-        if (state) el.classList.add('show');
-        else el.classList.remove('show');
+        if (state) el.classList.add('show'); else el.classList.remove('show');
     }
-
     function showToast(msg) {
         const t = document.getElementById('toast');
         document.getElementById('toast-msg').innerText = msg;
