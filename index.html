@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Дело в Шляпе | App</title>
+    <title>Дело в Шляпе | CRM</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #6c5ce7;
-            --primary-dark: #5649c0;
-            --accent: #a29bfe;
-            --success: #00b894;
-            --danger: #ff7675;
-            --bg: #f8f9fd;
+            --primary-light: #a29bfe;
+            --bg: #f4f7f6;
             --surface: #ffffff;
             --text-main: #2d3436;
             --text-sec: #636e72;
-            --radius: 20px;
-            --shadow: 0 10px 30px rgba(108, 92, 231, 0.1);
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #ff7675;
+            --radius: 16px;
+            --shadow: 0 8px 20px rgba(0,0,0,0.04);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #dfe6e9;
@@ -29,213 +29,128 @@
             height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
             overflow: hidden;
         }
 
-        /* Контейнер мобильного приложения */
         .app {
             width: 100%;
-            max-width: 414px; /* Размер iPhone Max */
+            max-width: 420px;
             height: 100%;
             background: var(--bg);
             position: relative;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
         }
 
-        @media (min-width: 420px) {
-            .app { height: 90vh; border-radius: 30px; }
-        }
+        @media (min-width: 425px) { .app { height: 95vh; border-radius: 24px; margin-top: 2.5vh; } }
 
-        /* Навигация */
+        /* Header */
         .header {
             padding: 15px 20px;
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(10px);
+            background: var(--surface);
             display: flex;
             align-items: center;
             justify-content: space-between;
             z-index: 100;
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 60px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
+        .header h1 { font-size: 18px; margin: 0; font-weight: 700; }
 
-        .header-title { font-weight: 700; font-size: 18px; color: var(--text-main); }
-        .back-btn { 
-            border: none; background: #f1f2f6; width: 36px; height: 36px; 
-            border-radius: 50%; color: var(--text-main); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: 0.2s; opacity: 0; pointer-events: none;
-        }
-        .back-btn.visible { opacity: 1; pointer-events: auto; }
+        /* Content */
+        .content { flex: 1; overflow-y: auto; padding: 20px; position: relative; }
 
-        /* Область контента */
-        .content-area {
-            flex: 1;
-            padding-top: 70px; /* отступ под хедер */
-            padding-bottom: 20px;
-            overflow-y: auto;
-            position: relative;
-        }
+        /* Screens */
+        .screen { display: none; animation: fade 0.3s ease; }
+        .screen.active { display: block; }
+        @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Экраны и переходы */
-        .screen {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            padding: 80px 20px 20px 20px; /* Паддинг с учетом хедера */
-            overflow-y: auto;
-            background: var(--bg);
-            opacity: 0;
-            transform: translateX(20px);
-            pointer-events: none;
-            transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.3s;
-            display: none; /* Скрываем полностью, чтобы не скроллилось */
-        }
-
-        .screen.active {
-            opacity: 1;
-            transform: translateX(0);
-            pointer-events: auto;
-            display: block;
-            z-index: 10;
-        }
-
-        /* Компоненты UI */
-        h1, h2, h3 { margin: 0 0 10px 0; color: var(--text-main); }
-        p { color: var(--text-sec); margin-bottom: 20px; line-height: 1.5; font-size: 14px; }
-
+        /* Buttons */
         .btn {
-            width: 100%;
-            padding: 16px;
-            border-radius: 16px;
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.1s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.2);
-            position: relative;
-            overflow: hidden;
+            width: 100%; padding: 14px; border-radius: 12px; border: none;
+            font-weight: 600; font-size: 15px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn:active { transform: scale(0.97); }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
-        .btn-secondary { background: white; color: var(--text-main); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .btn-ghost { background: transparent; color: var(--primary); box-shadow: none; }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--surface); color: var(--danger); border: 1px solid var(--danger); }
+        .btn-outline { background: transparent; border: 1px solid #ddd; color: var(--text-sec); }
 
-        /* Карточки */
-        .card {
+        /* CRM Tabs */
+        .tabs {
+            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px;
+            scrollbar-width: none;
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+        
+        .tab {
+            padding: 8px 16px; border-radius: 20px; background: white; white-space: nowrap;
+            font-size: 13px; font-weight: 600; color: var(--text-sec); border: 1px solid transparent;
+            cursor: pointer; transition: 0.2s;
+        }
+        .tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--danger); color: white; font-size: 10px; 
+            height: 18px; padding: 0 6px; border-radius: 9px; margin-left: 5px;
+        }
+
+        /* Order Card */
+        .order-card {
             background: var(--surface);
             border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            animation: slideUp 0.4s ease;
-        }
-
-        .product-item {
-            display: flex;
-            flex-direction: column;
-            background: white;
-            border-radius: var(--radius);
-            margin-bottom: 20px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-        .product-img { height: 160px; width: 100%; object-fit: cover; background: #eee; }
-        .product-info { padding: 15px; }
-        .tag-badge { 
-            background: #dff9fb; color: var(--success); 
-            padding: 4px 10px; border-radius: 8px; 
-            font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 8px;
-        }
-
-        /* Элементы формы загрузки */
-        .upload-zone {
-            border: 2px dashed #b2bec3;
-            border-radius: 16px;
-            padding: 30px;
-            text-align: center;
-            transition: 0.3s;
-            background: #fdfdfd;
-            cursor: pointer;
-        }
-        .upload-zone.dragover { border-color: var(--primary); background: #eef1ff; }
-        .upload-zone.done { border-color: var(--success); background: #edfffa; }
-        
-        /* Прогресс бар шагов */
-        .stepper-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            padding: 0 10px;
-        }
-        .step-dot {
-            width: 10px; height: 10px; border-radius: 50%; background: #dfe6e9;
-            transition: 0.3s;
-        }
-        .step-dot.active { background: var(--primary); transform: scale(1.3); }
-        .step-dot.completed { background: var(--success); }
-
-        /* Анимации */
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Тост уведомления */
-        .toast {
-            position: absolute;
-            bottom: 30px; left: 20px; right: 20px;
-            background: rgba(45, 52, 54, 0.9);
-            color: white;
             padding: 15px;
-            border-radius: 12px;
-            font-size: 14px;
-            transform: translateY(100px);
-            transition: 0.3s;
-            z-index: 200;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            backdrop-filter: blur(5px);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.1s;
         }
-        .toast.show { transform: translateY(0); }
+        .order-card:active { transform: scale(0.98); }
+        
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 36px; height: 36px; border-radius: 50%; background: #eee; object-fit: cover; }
+        .user-name { font-weight: 600; font-size: 14px; }
+        .time-badge { font-size: 11px; color: #999; background: #f5f5f5; padding: 4px 8px; border-radius: 6px; }
 
-        /* Выбор роли */
-        .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
-        .role-btn {
-            background: white; padding: 30px 10px; border-radius: 20px;
-            text-align: center; cursor: pointer; border: 2px solid transparent;
-            box-shadow: var(--shadow); transition: 0.2s;
-        }
-        .role-btn:hover { border-color: var(--primary); transform: translateY(-3px); }
-        .role-emoji { font-size: 40px; display: block; margin-bottom: 10px; }
+        .order-body { display: flex; gap: 10px; background: #f8f9fa; padding: 10px; border-radius: 10px; }
+        .prod-thumb { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+        .prod-details { font-size: 12px; display: flex; flex-direction: column; justify-content: center; }
 
-        /* Loader Overlay */
-        .loader-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.8);
-            z-index: 150;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0; pointer-events: none; transition: 0.3s;
+        .status-line { 
+            margin-top: 10px; font-size: 12px; font-weight: 600; 
+            display: flex; align-items: center; gap: 5px; 
         }
-        .loader-overlay.active { opacity: 1; pointer-events: auto; }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary);
-            border-radius: 50%; animation: spin 1s linear infinite;
+        .st-blue { color: var(--primary); }
+        .st-orange { color: #e17055; }
+        .st-purple { color: #a29bfe; }
+        .st-green { color: var(--success); }
+
+        /* Role Selection */
+        .role-card {
+            background: white; padding: 25px; border-radius: 20px; text-align: center;
+            margin-bottom: 15px; cursor: pointer; box-shadow: var(--shadow);
+            border: 2px solid transparent; transition: 0.2s;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .role-card:hover { border-color: var(--primary); }
+
+        /* Modal / Moderation View */
+        .moderation-view {
+            background: white; border-radius: var(--radius); padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        .data-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
+        .label { color: #999; }
+        
+        /* Stats Widget */
+        .stats-widget {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
+        }
+        .stat-item { background: white; padding: 15px; border-radius: 16px; }
+        .stat-val { font-size: 20px; font-weight: 700; color: var(--text-main); }
+        .stat-lbl { font-size: 12px; color: var(--text-sec); }
 
     </style>
 </head>
@@ -243,360 +158,295 @@
 
 <div class="app">
     <div class="header">
-        <button class="back-btn" id="backBtn" onclick="goBack()">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-        </button>
-        <div class="header-title">Дело в Шляпе</div>
-        <div style="width: 36px;"></div>
+        <h1 id="header-title">Дело в Шляпе</h1>
+        <div id="user-balance" style="font-size: 14px; font-weight: 600; color: var(--success); display: none;">12 500 ₽</div>
     </div>
 
-    <div id="screen-welcome" class="screen active">
-        <div style="text-align: center; margin-top: 40px; animation: slideUp 0.5s;">
-            <div style="font-size: 60px; margin-bottom: 10px;">🎩</div>
-            <h1>Добро пожаловать</h1>
-            <p>Выберите режим работы приложения</p>
-        </div>
+    <div class="content">
 
-        <div class="role-grid">
-            <div class="role-btn" onclick="setRole('buyer')">
-                <span class="role-emoji">🛍</span>
-                <b>Я Покупатель</b>
-                <div style="font-size: 12px; color: #aaa; margin-top: 5px;">Хочу кэшбэк</div>
+        <div id="screen-roles" class="screen active">
+            <h2 style="text-align: center; margin-bottom: 30px;">Выберите интерфейс</h2>
+            
+            <div class="role-card" onclick="setRole('seller')">
+                <div style="font-size: 40px; margin-bottom: 10px;">💼</div>
+                <div style="font-weight: 700; font-size: 18px;">Кабинет Селлера</div>
+                <div style="font-size: 13px; color: #888; margin-top: 5px;">Управление заявками и выплатами</div>
             </div>
-            <div class="role-btn" onclick="setRole('seller')">
-                <span class="role-emoji">💼</span>
-                <b>Я Селлер</b>
-                <div style="font-size: 12px; color: #aaa; margin-top: 5px;">Мои товары</div>
+
+            <div class="role-card" onclick="setRole('buyer')">
+                <div style="font-size: 40px; margin-bottom: 10px;">🛍</div>
+                <div style="font-weight: 700; font-size: 18px;">Приложение Покупателя</div>
+                <div style="font-size: 13px; color: #888; margin-top: 5px;">Каталог и выполнение заданий</div>
             </div>
+            
+            <p style="text-align: center; margin-top: 40px; font-size: 12px; color: #ccc;">
+                Demo v3.0 | CRM Integrated
+            </p>
         </div>
-        
-        <div style="text-align: center; margin-top: 40px;">
-            <p style="font-size: 11px; color: #bdc3c7;">Platform v2.1 (Demo)<br>Designed for Presentation</p>
-        </div>
-    </div>
 
-    <div id="screen-catalog" class="screen">
-        <h2>Доступные раздачи</h2>
-        <p>Выберите товар и получите 100% кэшбэк</p>
-
-        <div class="product-item" onclick="openTask('Roman Magic')">
-            <img src="https://ir.ozone.ru/s3/multimedia-0/wc1000/6647987820.jpg" class="product-img">
-            <div class="product-info">
-                <span class="tag-badge">🔥 Хит (Осталось: 4)</span>
-                <div style="font-weight: 700; font-size: 16px; margin-bottom: 5px;">Набор опытов Roman Magic</div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="text-decoration: line-through; color: #b2bec3; font-size: 13px;">1200 ₽</div>
-                    <div style="color: var(--success); font-weight: 700;">Бесплатно</div>
+        <div id="screen-seller" class="screen">
+            <div class="stats-widget">
+                <div class="stat-item">
+                    <div class="stat-val">8</div>
+                    <div class="stat-lbl">В работе</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val">3</div>
+                    <div class="stat-lbl" style="color: var(--danger);">Требуют внимания</div>
                 </div>
             </div>
-        </div>
 
-        <div class="product-item" onclick="openTask('Chemistry Kids')">
-            <img src="https://ir.ozone.ru/s3/multimedia-v/wc1000/6682736467.jpg" class="product-img">
-            <div class="product-info">
-                <span class="tag-badge">💎 Сертификат</span>
-                <div style="font-weight: 700; font-size: 16px; margin-bottom: 5px;">Набор "Юный Химик"</div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="text-decoration: line-through; color: #b2bec3; font-size: 13px;">950 ₽</div>
-                    <div style="color: var(--success); font-weight: 700;">Бесплатно</div>
+            <div class="tabs">
+                <div class="tab active" onclick="filterOrders('all', this)">Все</div>
+                <div class="tab" onclick="filterOrders('new', this)">Заказы <span class="badge">2</span></div>
+                <div class="tab" onclick="filterOrders('pickup', this)">ПВЗ <span class="badge">1</span></div>
+                <div class="tab" onclick="filterOrders('review', this)">Отзывы <span class="badge">4</span></div>
+                <div class="tab" onclick="filterOrders('payout', this)">Выплаты <span class="badge">1</span></div>
+            </div>
+
+            <div id="orders-list">
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="screen-task" class="screen">
-        <div class="stepper-container">
-            <div class="step-dot active" id="dot-1"></div>
-            <div class="step-dot" id="dot-2"></div>
-            <div class="step-dot" id="dot-3"></div>
-            <div class="step-dot" id="dot-4"></div>
-            <div class="step-dot" id="dot-5"></div>
         </div>
 
-        <h2 id="task-title">Шаг 1</h2>
-        
-        <div id="step-content">
-            </div>
-    </div>
-
-    <div id="screen-seller" class="screen">
-        <div style="background: var(--primary); color: white; border-radius: 20px; padding: 25px; margin-bottom: 25px;">
-            <div style="font-size: 13px; opacity: 0.8;">Ваш баланс</div>
-            <div style="font-size: 32px; font-weight: 700;">12,500 ₽</div>
-            <div style="margin-top: 15px; display: flex; gap: 10px;">
-                <button class="btn btn-secondary" style="padding: 8px 15px; font-size: 13px; width: auto;">Пополнить</button>
-            </div>
-        </div>
-
-        <h3>Активные действия</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-            <div class="card" style="margin:0; text-align: center; cursor: pointer;" onclick="goTo('screen-add-product')">
-                <span style="font-size: 24px;">📦</span>
-                <div style="font-weight: 600; margin-top: 5px; font-size: 13px;">Новый товар</div>
-            </div>
-            <div class="card" style="margin:0; text-align: center; position: relative; cursor: pointer;" onclick="goTo('screen-moderation')">
-                <span style="font-size: 24px;">🛡</span>
-                <div style="font-weight: 600; margin-top: 5px; font-size: 13px;">Модерация</div>
-                <div style="position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center;">2</div>
-            </div>
-        </div>
-
-        <h3>Мои товары</h3>
-        <div class="product-item" style="flex-direction: row; height: 80px;">
-            <img src="https://ir.ozone.ru/s3/multimedia-0/wc1000/6647987820.jpg" style="width: 80px; height: 100%;">
-            <div style="padding: 10px; display: flex; flex-direction: column; justify-content: center;">
-                <div style="font-weight: 600; font-size: 14px;">Roman Magic</div>
-                <div style="font-size: 12px; color: var(--success);">В работе: 4 шт</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="screen-moderation" class="screen">
-        <h2>Заявка #9021</h2>
-        <div class="card">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                <div style="width: 30px; height: 30px; background: #ddd; border-radius: 50%;"></div>
-                <div>
-                    <div style="font-weight: 600; font-size: 14px;">@ivan_user</div>
-                    <div style="font-size: 12px; color: #999;">Товар: Roman Magic</div>
+        <div id="screen-moderation" class="screen">
+            <button class="btn btn-outline" style="margin-bottom: 15px; width: auto; padding: 8px 15px;" onclick="goTo('screen-seller')">← Назад к списку</button>
+            
+            <div id="moderation-content">
                 </div>
-            </div>
-            <div style="font-size: 14px; margin-bottom: 10px;"><b>Этап:</b> Проверка отзыва (Draft)</div>
-            
-            <div style="background: #f1f2f6; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
-                <p style="margin: 0; font-style: italic; font-size: 13px;">"Отличный набор, ребенку понравилось! Коробочка целая..."</p>
-            </div>
-            
-            <div style="height: 150px; background: #333; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
-                [ФОТО ОТЗЫВА]
-            </div>
+        </div>
 
-            <div style="display: flex; gap: 10px;">
-                <button class="btn" style="background: #fab1a0; color: #d63031;" onclick="moderate(false)">Отклонить</button>
-                <button class="btn btn-success" onclick="moderate(true)">Одобрить</button>
+        <div id="screen-buyer" class="screen">
+            <button class="btn btn-outline" style="margin-bottom: 15px;" onclick="goTo('screen-roles')">← Выход</button>
+            <div style="text-align: center; padding: 40px; background: white; border-radius: 16px;">
+                <h3>Режим Покупателя</h3>
+                <p>Здесь пользователь видит каталог товаров (как в прошлой версии).</p>
+                <p>Для демонстрации CRM перейдите в кабинет селлера.</p>
             </div>
         </div>
-    </div>
 
-    <div id="screen-add-product" class="screen">
-        <h2>Новая раздача</h2>
-        <div class="card">
-            <p style="margin-bottom: 5px; font-weight: 600; font-size: 14px;">Название</p>
-            <input type="text" placeholder="Например: Набор фокусника" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px;">
-            
-            <p style="margin-bottom: 5px; font-weight: 600; font-size: 14px;">Поисковая фраза</p>
-            <input type="text" placeholder="фокусы для детей" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px;">
-            
-            <p style="margin-bottom: 5px; font-weight: 600; font-size: 14px;">Сумма кэшбэка</p>
-            <input type="number" placeholder="500" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px;">
-            
-            <button class="btn btn-primary" onclick="showLoader(1500, () => { showToast('✅ Товар создан'); goBack(); })">Запустить</button>
-        </div>
     </div>
-
-    <div id="toast" class="toast">
-        <span id="toast-icon">✅</span>
-        <span id="toast-msg">Сообщение</span>
-    </div>
-
-    <div id="loader" class="loader-overlay">
-        <div class="spinner"></div>
-    </div>
-
 </div>
 
 <script>
-    // === ЛОГИКА ===
-    let historyStack = ['screen-welcome'];
-    let currentTaskStep = 1;
-    let currentUserRole = '';
-
-    // Переходы
-    function goTo(screenId) {
-        document.querySelectorAll('.screen').forEach(el => {
-            el.classList.remove('active');
-            el.style.display = 'none'; // reset display
-        });
-        
-        const target = document.getElementById(screenId);
-        target.style.display = 'block';
-        // Небольшая задержка для срабатывания transition
-        setTimeout(() => target.classList.add('active'), 10);
-
-        // Кнопка назад
-        const backBtn = document.getElementById('backBtn');
-        if (screenId === 'screen-welcome') {
-            backBtn.classList.remove('visible');
-            historyStack = ['screen-welcome'];
-        } else {
-            backBtn.classList.add('visible');
-            historyStack.push(screenId);
+    // --- ДАННЫЕ (MOCK DATA) ---
+    const orders = [
+        {
+            id: 101,
+            user: "Ольга К.",
+            avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+            product: "Набор опытов Roman Magic",
+            img: "https://ir.ozone.ru/s3/multimedia-0/wc1000/6647987820.jpg",
+            status: "new", // ждет подтверждения заказа
+            time: "5 мин. назад",
+            details: { type: "order", screenshot: "https://via.placeholder.com/300x400/000000/ffffff?text=SCREENSHOT+ORDER" }
+        },
+        {
+            id: 102,
+            user: "Дмитрий В.",
+            avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+            product: "Юный Химик",
+            img: "https://ir.ozone.ru/s3/multimedia-v/wc1000/6682736467.jpg",
+            status: "new",
+            time: "12 мин. назад",
+            details: { type: "order", screenshot: "https://via.placeholder.com/300x400/333333/ffffff?text=SCREENSHOT+ORDER" }
+        },
+        {
+            id: 201,
+            user: "Елена С.",
+            avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+            product: "Набор опытов 1.0",
+            img: "https://ir.ozone.ru/s3/multimedia-0/wc1000/6647987820.jpg",
+            status: "pickup", // фото с пвз
+            time: "2 ч. назад",
+            details: { type: "pickup", screenshot: "https://via.placeholder.com/300x300/e17055/ffffff?text=PHOTO+AT+PICKUP" }
+        },
+        {
+            id: 301,
+            user: "Максим Г.",
+            avatar: "https://randomuser.me/api/portraits/men/11.jpg",
+            product: "Roman Magic",
+            img: "https://ir.ozone.ru/s3/multimedia-0/wc1000/6647987820.jpg",
+            status: "review", // проверка отзыва
+            time: "Только что",
+            details: { 
+                type: "review", 
+                text: "Коробка пришла целая, ребенок в восторге! Химичили весь вечер. Инструкция понятная.", 
+                rating: 5,
+                media: ["https://via.placeholder.com/150/a29bfe/fff?text=PHOTO1", "https://via.placeholder.com/150/a29bfe/fff?text=VIDEO"]
+            }
+        },
+        {
+            id: 401,
+            user: "Алина Ф.",
+            avatar: "https://randomuser.me/api/portraits/women/12.jpg",
+            product: "Юный Химик",
+            img: "https://ir.ozone.ru/s3/multimedia-v/wc1000/6682736467.jpg",
+            status: "payout", // ждет выплату
+            time: "1 д. назад",
+            details: { 
+                type: "payout", 
+                amount: 950,
+                phone: "+7 (999) 123-45-67",
+                bank: "Т-Банк",
+                screenshot: "https://via.placeholder.com/300x400/00b894/ffffff?text=REVIEW+PUBLISHED"
+            }
         }
-    }
+    ];
 
-    function goBack() {
-        if (historyStack.length > 1) {
-            historyStack.pop();
-            const prev = historyStack[historyStack.length - 1];
-            goTo(prev);
-            // Удаляем дубль, который добавил goTo
-            historyStack.pop(); 
-        }
-    }
+    // --- ЛОГИКА ---
 
-    // Роли
     function setRole(role) {
-        currentUserRole = role;
-        if(role === 'buyer') goTo('screen-catalog');
-        else goTo('screen-seller');
+        document.getElementById('screen-roles').classList.remove('active');
+        if (role === 'seller') {
+            document.getElementById('screen-seller').classList.add('active');
+            document.getElementById('user-balance').style.display = 'block';
+            renderOrders(orders);
+        } else {
+            document.getElementById('screen-buyer').classList.add('active');
+        }
     }
 
-    // === ЛОГИКА ЗАДАНИЯ ПОКУПАТЕЛЯ ===
-    
-    function openTask(itemName) {
-        currentTaskStep = 1;
-        renderTaskStep();
-        goTo('screen-task');
+    function goTo(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
     }
 
-    function renderTaskStep() {
-        const container = document.getElementById('step-content');
-        const dots = document.querySelectorAll('.step-dot');
-        const title = document.getElementById('task-title');
-        
-        // Обновляем точки
-        dots.forEach((dot, idx) => {
-            dot.classList.remove('active', 'completed');
-            if(idx + 1 < currentTaskStep) dot.classList.add('completed');
-            if(idx + 1 === currentTaskStep) dot.classList.add('active');
-        });
+    // Рендер списка заявок
+    function renderOrders(data) {
+        const container = document.getElementById('orders-list');
+        container.innerHTML = "";
 
-        // Контент шагов
-        if (currentTaskStep === 1) {
-            title.innerText = "Шаг 1: Поиск";
-            container.innerHTML = `
-                <div class="card">
-                    <p>1. Откройте Wildberries</p>
-                    <p>2. Введите в поиск:</p>
-                    <div style="background: #f1f2f6; padding: 15px; border-radius: 10px; font-weight: bold; text-align: center; color: var(--primary); margin-bottom: 15px;">
-                        набор опытов для детей
+        data.forEach(order => {
+            let statusBadge = "";
+            let statusText = "";
+            
+            if (order.status === 'new') { 
+                statusBadge = '<span class="st-blue">● Проверка заказа</span>'; 
+            } else if (order.status === 'pickup') {
+                statusBadge = '<span class="st-orange">● Фото из ПВЗ</span>';
+            } else if (order.status === 'review') {
+                statusBadge = '<span class="st-purple">● Согласование отзыва</span>';
+            } else if (order.status === 'payout') {
+                statusBadge = '<span class="st-green">● Ожидает выплаты</span>';
+            }
+
+            const html = `
+                <div class="order-card" onclick="openModeration(${order.id})">
+                    <div class="order-header">
+                        <div class="user-info">
+                            <img src="${order.avatar}" class="avatar">
+                            <div>
+                                <div class="user-name">${order.user}</div>
+                                <div style="font-size: 11px; color: #777;">Рейтинг: 5.0 ★</div>
+                            </div>
+                        </div>
+                        <div class="time-badge">${order.time}</div>
                     </div>
-                    <p>3. Найдите бренд <b>Дело в Шляпе</b> и оформите заказ.</p>
+                    <div class="order-body">
+                        <img src="${order.img}" class="prod-thumb">
+                        <div class="prod-details">
+                            <div style="font-weight: 600;">${order.product}</div>
+                            <div style="color: #999;">Артикул: 1948210</div>
+                        </div>
+                    </div>
+                    <div class="status-line">
+                        ${statusBadge}
+                        <span style="margin-left: auto; color: #ccc;">ᐳ</span>
+                    </div>
                 </div>
-                <button class="btn btn-primary" onclick="nextTaskStep()">📸 Я заказал (Скрин)</button>
+            `;
+            container.innerHTML += html;
+        });
+    }
+
+    // Фильтрация табами
+    function filterOrders(status, element) {
+        // UI tabs
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        element.classList.add('active');
+
+        // Logic
+        if (status === 'all') {
+            renderOrders(orders);
+        } else {
+            const filtered = orders.filter(o => o.status === status);
+            renderOrders(filtered);
+        }
+    }
+
+    // Открытие модерации (ДЕТАЛИ)
+    function openModeration(id) {
+        const order = orders.find(o => o.id === id);
+        const container = document.getElementById('moderation-content');
+        let contentHtml = "";
+
+        // Шапка модерации
+        contentHtml += `
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                <img src="${order.avatar}" style="width: 50px; height: 50px; border-radius: 50%;">
+                <div>
+                    <div style="font-size: 18px; font-weight: 700;">${order.user}</div>
+                    <div style="font-size: 13px; color: #777;">Товар: ${order.product}</div>
+                </div>
+            </div>
+            <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 20px;">
+        `;
+
+        // Логика по типам
+        if (order.status === 'new') {
+            contentHtml += `
+                <h3>📸 Скриншот заказа</h3>
+                <p>Проверьте, что это наш бренд и цена совпадает.</p>
+                <img src="${order.details.screenshot}" style="width: 100%; border-radius: 10px; margin-bottom: 20px;">
+                <div style="display: flex; gap: 10px;">
+                     <button class="btn btn-danger" onclick="alert('Отклонено')">Отклонить</button>
+                     <button class="btn btn-success" onclick="alert('Одобрено! Переведен на этап ПВЗ')">✅ Подтвердить заказ</button>
+                </div>
             `;
         } 
-        else if (currentTaskStep === 2) {
-            title.innerText = "Шаг 2: Скрин заказа";
-            container.innerHTML = `
-                <p>Загрузите скриншот из раздела "Доставки", где видно статус "Оформлен".</p>
-                <div class="upload-zone" onclick="uploadSimulate(this)">
-                    📂 Нажмите для загрузки фото
-                </div>
-                <div style="height: 20px;"></div>
-                <button class="btn btn-primary" id="btn-next" disabled onclick="nextTaskStep()">Отправить на проверку</button>
+        else if (order.status === 'pickup') {
+            contentHtml += `
+                <h3>📦 Фото из ПВЗ</h3>
+                <p>Убедитесь, что пользователь забрал именно наш товар.</p>
+                <img src="${order.details.screenshot}" style="width: 100%; border-radius: 10px; margin-bottom: 20px;">
+                <button class="btn btn-success" onclick="alert('Принято! Ждем отзыв')">✅ Товар получен</button>
             `;
         }
-        else if (currentTaskStep === 3) {
-            title.innerText = "Шаг 3: Получение";
-            container.innerHTML = `
-                <div class="card" style="background: #e1ffe1; border: 1px solid #00b894;">
-                    <h3 style="color: #00b894; margin:0;">Заказ одобрен!</h3>
-                    <p style="margin:5px 0 0 0;">Менеджер подтвердил заказ.</p>
+        else if (order.status === 'review') {
+            contentHtml += `
+                <h3>📝 Проверка отзыва (Draft)</h3>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; font-style: italic;">
+                    "${order.details.text}"
                 </div>
-                <p>Когда заберете товар из ПВЗ, сделайте фото коробки.</p>
-                <div class="upload-zone" onclick="uploadSimulate(this)">
-                    📸 Фото товара
+                <div style="display: flex; gap: 10px; overflow-x: auto; margin-bottom: 20px;">
+                    ${order.details.media.map(m => `<img src="${m}" style="width: 100px; height: 100px; border-radius: 8px; object-fit: cover;">`).join('')}
                 </div>
-                <div style="height: 20px;"></div>
-                <button class="btn btn-primary" id="btn-next" disabled onclick="nextTaskStep()">Я забрал товар</button>
+                <div style="display: flex; gap: 10px;">
+                     <button class="btn btn-outline" onclick="alert('Отправлено замечание')">✍️ Попросить исправить</button>
+                     <button class="btn btn-success" onclick="alert('Текст согласован! Можно публиковать')">✅ Согласовать</button>
+                </div>
             `;
         }
-        else if (currentTaskStep === 4) {
-            title.innerText = "Шаг 4: Черновик";
-            container.innerHTML = `
-                <p>Пришлите материалы для отзыва перед публикацией.</p>
+        else if (order.status === 'payout') {
+            contentHtml += `
+                <h3>💰 Заявка на выплату</h3>
+                <div class="data-row"><span class="label">Сумма:</span> <b>${order.details.amount} ₽</b></div>
+                <div class="data-row"><span class="label">Банк:</span> <b>${order.details.bank}</b></div>
+                <div class="data-row"><span class="label">Реквизиты:</span> <b>${order.details.phone}</b></div>
                 
-                <input type="text" placeholder="Текст вашего отзыва..." style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px;">
-                
-                <div class="upload-zone" style="padding: 15px;" onclick="uploadSimulate(this)">
-                    📸 Фото/Видео отзыва
+                <div style="background: #e6fffa; color: #00b894; padding: 10px; border-radius: 8px; margin: 15px 0; font-size: 13px;">
+                    ✅ Отзыв опубликован и проверен.
                 </div>
-                <div style="height: 20px;"></div>
-                <button class="btn btn-primary" id="btn-next" disabled onclick="nextTaskStep()">Согласовать текст</button>
+
+                <div style="display: grid; gap: 10px;">
+                    <button class="btn btn-primary" onclick="alert('Выплата отправлена через API банка!')">⚡️ Авто-выплата (СБП)</button>
+                    <button class="btn btn-outline" onclick="alert('Код сертификата отправлен в чат')">🎁 Выдать сертификатом</button>
+                </div>
             `;
         }
-        else if (currentTaskStep === 5) {
-            title.innerText = "Финал: Выплата";
-            container.innerHTML = `
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <div style="font-size: 50px;">🎉</div>
-                    <h3>Отзыв опубликован!</h3>
-                    <p>Введите данные для получения бонуса.</p>
-                </div>
-                <input type="text" placeholder="Номер телефона / Карты" style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px;">
-                <button class="btn btn-primary" onclick="finishTask()">💰 Получить деньги</button>
-            `;
-        }
-    }
 
-    function nextTaskStep() {
-        if (currentTaskStep === 2 || currentTaskStep === 4) {
-            // Имитация ожидания проверки
-            showLoader(1500, () => {
-                showToast("✅ Менеджер проверил и одобрил!");
-                currentTaskStep++;
-                renderTaskStep();
-            });
-        } else {
-            currentTaskStep++;
-            renderTaskStep();
-        }
-    }
-
-    function finishTask() {
-        showLoader(2000, () => {
-            alert("Заявка на выплату принята! Деньги придут в течение 24 часов.");
-            goTo('screen-catalog');
-        });
-    }
-
-    // === UTILITES ===
-
-    function uploadSimulate(el) {
-        el.innerHTML = "⏳ Загрузка...";
-        setTimeout(() => {
-            el.innerHTML = "✅ Файл загружен";
-            el.classList.add('done');
-            document.getElementById('btn-next').disabled = false;
-            showToast("Фото успешно загружено");
-        }, 1000);
-    }
-
-    function moderate(isApproved) {
-        showLoader(1000, () => {
-            if(isApproved) showToast("✅ Одобрено. Пользователь получит уведомление.");
-            else showToast("❌ Отклонено.");
-            goBack();
-        });
-    }
-
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        document.getElementById('toast-msg').innerText = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
-    function showLoader(time, callback) {
-        const loader = document.getElementById('loader');
-        loader.classList.add('active');
-        setTimeout(() => {
-            loader.classList.remove('active');
-            if(callback) callback();
-        }, time);
+        container.innerHTML = contentHtml;
+        goTo('screen-moderation');
     }
 
 </script>
